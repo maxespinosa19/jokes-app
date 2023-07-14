@@ -33,8 +33,8 @@ export default function Jokes() {
       <View style={styles.container}>
         <Text style={styles.header}>Got Jokes?</Text>
         {data.length > 0 && currentIndex < data.length && (
-          <View style={styles.jokeContainer}>
-            <Text style={styles.jokeText}>{data[currentIndex].setup}</Text>
+          <View style={[styles.jokeContainer, { opacity: 0.9 }]}>
+            <Text style={styles.jokeText}>{data[currentIndex].setup }</Text>
             {!showPunchline ? (
               <TouchableOpacity onPress={handlePunchlineClick} style={styles.button}>
                 <Text style={styles.buttonText}>Show Punchline</Text>
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   header: {
-    fontSize: 70,
+    fontSize: 50,
     paddingBottom: 50,
     color: '#FFF1FD',
     opacity: 0.9,
@@ -92,8 +92,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
     height: 300,
     width: '90%',
-    backgroundColor: '#9f86c0',
-    opacity: 0.9,
+    backgroundColor: 'rgba(217, 167, 255, 0.5)',
     paddingHorizontal: 16,
     paddingVertical: 105,
     borderRadius: 20,
