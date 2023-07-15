@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Text, View, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
+import FlipCard from 'react-native-flip-card';
 
 export default function Jokes() {
-  const [data, setData] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [jokes, setJokes] = useState([]);
+  const [currentJokeIndex, setCurrentJokeIndex] = useState(0);
   const [showPunchline, setShowPunchline] = useState(false);
 
-  const getData = async () => {
-    const resp = await fetch('https://api.sampleapis.com/jokes/goodJokes');
-    const json = await resp.json();
-    setData(json);
+  const fetchJokes = async () => {
+    const response = await fetch('https://api.sampleapis.com/jokes/goodJokes');
+    const json = await response.json();
+    setJokes(json);
   };
 
   const handleClick = () => {
-    setCurrentIndex(prevIndex => prevIndex + 1);
+    setCurrentJokeIndex(prevIndex => prevIndex + 1);
     setShowPunchline(false);
   };
 
@@ -22,8 +29,46 @@ export default function Jokes() {
   };
 
   useEffect(() => {
-    getData();
+    fetchJokes();
   }, []);
+
+  const renderJoke = () => {
+    if (jokes.length > 0 && currentJokeIndex < jokes.length) {
+      return (
+        <FlipCard
+          flip={showPunchline}
+          friction={6}
+          perspective={1000}
+          flipHorizontal={true}
+          flipVertical={false}
+          clickable={false}
+          style={styles.flipCard}
+        >
+          {/* Front */}
+          <View style={[styles.jokeContainer, { opacity: 0.8 }]}>
+            <Text style={styles.jokeText}>{jokes[currentJokeIndex].setup}</Text>
+            {!showPunchline && (
+              <TouchableOpacity onPress={handlePunchlineClick} style={styles.button}>
+                <Text style={styles.buttonText}>Show Punchline</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Back */}
+          <View style={[styles.jokeContainer, styles.backContainer, { opacity: 0.8 }]}>
+            <Text style={styles.punchlineText}>{jokes[currentJokeIndex].punchline}</Text>
+            {currentJokeIndex < jokes.length - 1 && (
+              <TouchableOpacity onPress={handleClick} style={styles.nextJokeButton}>
+                <Text style={styles.buttonText}>Next Joke</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </FlipCard>
+      );
+    } else {
+      return <Text style={styles.noMoreJokesText}>No more jokes 😔</Text>;
+    }
+  };
 
   return (
     <ImageBackground
@@ -32,25 +77,7 @@ export default function Jokes() {
     >
       <View style={styles.container}>
         <Text style={styles.header}>Got Jokes?</Text>
-        {data.length > 0 && currentIndex < data.length && (
-          <View style={[styles.jokeContainer, { opacity: 0.9 }]}>
-            <Text style={styles.jokeText}>{data[currentIndex].setup }</Text>
-            {!showPunchline ? (
-              <TouchableOpacity onPress={handlePunchlineClick} style={styles.button}>
-                <Text style={styles.buttonText}>Show Punchline</Text>
-              </TouchableOpacity>
-            ) : (
-              <Text style={styles.punchlineText}>{data[currentIndex].punchline}</Text>
-            )}
-          </View>
-        )}
-        {currentIndex < data.length - 1 ? (
-          <TouchableOpacity onPress={handleClick} style={styles.button}>
-            <Text style={styles.buttonText}>Next Joke</Text>
-          </TouchableOpacity>
-        ) : (
-          <Text style={styles.noMoreJokesText}>No more jokes 😔</Text>
-        )}
+        {renderJoke()}
       </View>
     </ImageBackground>
   );
@@ -59,13 +86,13 @@ export default function Jokes() {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover', 
+    resizeMode: 'cover',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 150,
     backgroundColor: 'transparent',
   },
   header: {
@@ -92,11 +119,11 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
     height: 300,
     width: '90%',
-    backgroundColor: 'rgba(217, 167, 255, 0.5)',
+    backgroundColor: 'rgba(217, 167, 255, 1)',
     paddingHorizontal: 16,
     paddingVertical: 105,
     borderRadius: 20,
-    shadowColor: '#e0b1cb',
+    shadowColor: '#C8A2C8',
     shadowOffset: {
       width: 0,
       height: 6,
@@ -110,7 +137,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
     fontWeight: '500',
-    color: '#EAE1F5',
+    color: '#fff',
     fontFamily: 'Noteworthy-Bold',
   },
   punchlineText: {
@@ -118,12 +145,28 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
     fontWeight: '400',
-    color: '#f1c0e8',
+    color: '#231942',
     fontStyle: 'italic',
     fontFamily: 'Noteworthy-Bold',
   },
   button: {
-    marginTop: 16,
+    marginBottom: 30,
+    backgroundColor: '#e0b1cb',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    shadowColor: '#f4978e',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.6,
+    shadowRadius: 1.65,
+    elevation: 18,
+    opacity: 1,
+  },
+  nextJokeButton: {
+    marginTop: 10,
     backgroundColor: '#e0b1cb',
     paddingVertical: 10,
     paddingHorizontal: 16,
@@ -150,5 +193,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#9E9E9E',
     fontFamily: 'Noteworthy-Bold',
+  },
+  flipCard: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backContainer: {
+    backgroundColor: 'rgba(217, 167, 255, 1)',
+    transform: [{ rotateY: '360deg' }],
   },
 });
