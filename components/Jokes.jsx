@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  ImageBackground,
-} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity, ImageBackground}
+from 'react-native';
 import FlipCard from 'react-native-flip-card';
 
 export default function Jokes() {
