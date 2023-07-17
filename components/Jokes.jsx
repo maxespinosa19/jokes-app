@@ -37,7 +37,7 @@ export default function Jokes() {
       return (
         <FlipCard
           flip={showPunchline}
-          friction={6}
+          friction={5}
           perspective={1000}
           flipHorizontal={true}
           flipVertical={false}
